@@ -4,6 +4,7 @@ export default function App() {
   const [file, setFile] = useState(null);
   const [title, setTitle] = useState('');
   const [collection, setCollection] = useState('');
+  const [imageMode, setImageMode] = useState('');
   const [loading, setLoading] = useState(false);
   const [previews, setPreviews] = useState([]);
   const [downloadUrl, setDownloadUrl] = useState(null);
@@ -28,6 +29,7 @@ export default function App() {
     formData.append('artwork', file);
     formData.append('title', title);
     formData.append('collection', collection);
+    if (imageMode) formData.append('imageMode', imageMode);
 
     const res = await fetch('/generate', { method: 'POST', body: formData });
     const { zip, genId } = await res.json();
@@ -46,6 +48,7 @@ export default function App() {
       <input type="file" onChange={e => setFile(e.target.files[0])} /><br />
       <input type="text" placeholder="Artwork Title" value={title} onChange={e => setTitle(e.target.value)} /><br />
       <input type="text" placeholder="Collection Name" value={collection} onChange={e => setCollection(e.target.value)} /><br />
+      <input type="text" placeholder="Image Mode" value={imageMode} onChange={e => setImageMode(e.target.value)} /><br />
       <button onClick={handleGenerate} disabled={loading}>
         {loading ? 'Generating...' : 'Generate Mockups'}
       </button>

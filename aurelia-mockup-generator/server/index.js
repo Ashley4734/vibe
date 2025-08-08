@@ -36,7 +36,7 @@ const connections = {}; // genId -> (data) => void
 // ---------- Replicate helpers ----------
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-async function startPrediction(prompt) {
+async function startPrediction(input) {
   const res = await fetch('https://api.replicate.com/v1/predictions', {
     method: 'POST',
     headers: {
@@ -45,7 +45,7 @@ async function startPrediction(prompt) {
     },
     body: JSON.stringify({
       version: REPLICATE_MODEL_VERSION,
-      input: { prompt },
+      input,
     }),
   });
 
@@ -81,12 +81,22 @@ async function pollPrediction(id, onTick) {
 }
 
 // ---------- Core generation ----------
-async function generateMockup(mockup, title, collection, sendUpdate) {
+async function generateMockup(
+  mockup,
+  title,
+  collection,
+  sendUpdate,
+  artworkData,
+  imageMode
+) {
   const prompt = mockup.prompt.replace('{artwork_subject}', title);
+  const input = { prompt };
+  if (artworkData) input.image = artworkData;
+  if (imageMode) input.image_mode = imageMode;
 
   try {
     // Fire prediction
-    const created = await startPrediction(prompt);
+    const created = await startPrediction(input);
     sendUpdate({ type: mockup.type, status: 'queued', id: created.id });
 
     // Poll for completion (and forward progress)
@@ -155,8 +165,18 @@ app.post('/generate', upload.single('artwork'), async (req, res) => {
     });
   }
 
-  const { title = 'Untitled', collection = 'Default' } = req.body;
+  const { title = 'Untitled', collection = 'Default', imageMode } = req.body;
   const genId = Date.now().toString();
+
+  let artworkData = null;
+  const artworkPath = req.file?.path;
+  const artworkMime = req.file?.mimetype;
+  if (artworkPath && artworkMime) {
+    const base64 = fs.readFileSync(artworkPath).toString('base64');
+    artworkData = `data:${artworkMime};base64,${base64}`;
+  } else {
+    return res.status(400).json({ error: 'No artwork uploaded' });
+  }
 
   const sendUpdate = (data) => {
     const fn = connections[genId];
@@ -166,7 +186,9 @@ app.post('/generate', upload.single('artwork'), async (req, res) => {
   try {
     const results = (
       await Promise.all(
-        MOCKUP_CONFIG.map((m) => generateMockup(m, title, collection, sendUpdate))
+        MOCKUP_CONFIG.map((m) =>
+          generateMockup(m, title, collection, sendUpdate, artworkData, imageMode)
+        )
       )
     ).filter(Boolean);
 
@@ -197,6 +219,8 @@ app.post('/generate', upload.single('artwork'), async (req, res) => {
   } catch (e) {
     console.error(e);
     res.status(500).json({ error: e.message || 'Generation failed' });
+  } finally {
+    if (artworkPath) fs.unlink(artworkPath, () => {});
   }
 });
 
