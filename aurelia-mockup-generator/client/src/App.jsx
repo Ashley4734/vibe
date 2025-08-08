@@ -41,7 +41,9 @@ export default function App() {
 
     eventSourceRef.current = connectProgress(genId);
 
-    const blob = await (await fetch(zip)).blob();
+    const b64 = zip.split(',')[1];
+    const bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+    const blob = new Blob([bytes], { type: 'application/zip' });
     setDownloadUrl(window.URL.createObjectURL(blob));
 
     eventSourceRef.current?.close();
