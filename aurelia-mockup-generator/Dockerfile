@@ -4,7 +4,7 @@ WORKDIR /app/client
 COPY client/package*.json ./
 RUN npm install
 COPY client/ .
-RUN npm run build
+RUN npm run build && test -f dist/index.html
 
 # ---------- BACKEND BUILD ----------
 FROM node:18-alpine AS backend
@@ -18,6 +18,7 @@ COPY mockups.json .
 
 # Copy built frontend into backend's static folder
 COPY --from=frontend /app/client/dist ./client/dist
+RUN test -f client/dist/index.html
 
 # ---------- RUN APP ----------
 WORKDIR /app/server
