@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 export default function App() {
   const [file, setFile] = useState(null);
@@ -7,6 +7,7 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [previews, setPreviews] = useState([]);
   const [downloadUrl, setDownloadUrl] = useState(null);
+  const eventSourceRef = useRef(null);
 
   const connectProgress = (genId) => {
     const eventSource = new EventSource(`/progress/${genId}`);
@@ -16,6 +17,10 @@ export default function App() {
         setPreviews(prev => [...prev, data]);
       }
     };
+    eventSource.onerror = () => {
+      eventSource.close();
+    };
+    return eventSource;
   };
 
   const handleGenerate = async () => {
@@ -32,13 +37,20 @@ export default function App() {
     const res = await fetch('/generate', { method: 'POST', body: formData });
     const { zip, genId } = await res.json();
 
-    connectProgress(genId);
+    eventSourceRef.current = connectProgress(genId);
 
     const blob = await (await fetch(zip)).blob();
     setDownloadUrl(window.URL.createObjectURL(blob));
 
+    eventSourceRef.current?.close();
     setLoading(false);
   };
+
+  useEffect(() => {
+    return () => {
+      eventSourceRef.current?.close();
+    };
+  }, []);
 
   return (
     <div className="p-6">
