@@ -1,5 +1,5 @@
 # ---------- FRONTEND BUILD ----------
-FROM node:18-alpine as frontend
+FROM node:18-alpine AS frontend
 WORKDIR /app/client
 COPY client/package*.json ./
 RUN npm install
@@ -7,7 +7,7 @@ COPY client/ .
 RUN npm run build
 
 # ---------- BACKEND BUILD ----------
-FROM node:18-alpine as backend
+FROM node:18-alpine AS backend
 WORKDIR /app
 COPY server/package*.json ./server/
 RUN cd server && npm install
