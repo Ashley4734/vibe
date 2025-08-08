@@ -1,0 +1,62 @@
+[
+  {
+    "type": "Main Listing Image",
+    "ratio": "1:1",
+    "size": [2700, 2700],
+    "prompt": "{artwork_subject} framed as digital art in a modern living room, Samsung Frame TV centered on a white wall, neutral decor, warm sunlight, soft natural shadows, no people, realistic styling, minimalist aesthetic, square crop"
+  },
+  {
+    "type": "Alt Closeup",
+    "ratio": "5:4",
+    "size": [1500, 1200],
+    "prompt": "Close-up detail of {artwork_subject}, showing brush strokes and texture, warm natural lighting, soft shadows, high resolution, realistic detail"
+  },
+  {
+    "type": "Lifestyle Mockup",
+    "ratio": "3:2",
+    "size": [2400, 1600],
+    "prompt": "{artwork_subject} displayed as framed digital art in a cozy boho-Scandinavian living room, soft indirect daylight, warm tones, plants, neutral furniture, realistic textures"
+  },
+  {
+    "type": "Secondary Angle Variation",
+    "ratio": "5:4",
+    "size": [2000, 1600],
+    "prompt": "{artwork_subject} displayed as framed digital art at a slight angle, alternate frame color, editorial style, soft shadows, elegant interior"
+  },
+  {
+    "type": "Product Format Explanation",
+    "ratio": "4:5",
+    "size": [1600, 2000],
+    "prompt": "Minimalist product display with overlay text: 'This is a DIGITAL FILE — No physical item will be shipped', clean icons, soft neutral background, modern typography"
+  },
+  {
+    "type": "What's Included Graphic",
+    "ratio": "4:5",
+    "size": [1600, 2000],
+    "prompt": "Flat lay of digital device screens showing {artwork_subject}, with icons representing Frame-TV PNG, 2× JPGs, and print guide, soft cream and taupe tones, branded style"
+  },
+  {
+    "type": "How to Use It",
+    "ratio": "4:5",
+    "size": [1600, 2000],
+    "prompt": "Modern infographic showing 3-step process: 1. Download ZIP, 2. Transfer PNG to Frame TV, 3. Print JPGs, using minimalist icons and calm neutral palette"
+  },
+  {
+    "type": "How to Download",
+    "ratio": "4:5",
+    "size": [1600, 2000],
+    "prompt": "Minimalist instruction graphic: 'Go to Purchases > Click Download', Etsy-style buttons/icons, cream background, clean typography"
+  },
+  {
+    "type": "Collection Grid / Palette Preview",
+    "ratio": "1:1",
+    "size": [2700, 2700],
+    "prompt": "Grid display of 3–4 artworks including {artwork_subject}, matching color palette, elegant and consistent presentation, neutral background"
+  },
+  {
+    "type": "Brand Identity / Testimonial",
+    "ratio": "1:1",
+    "size": [2700, 2700],
+    "prompt": "{artwork_subject} shown subtly in background with Aurelia Galleria logo watermark, soft gradient, clean modern font with short tagline or 5-star review"
+  }
+]
