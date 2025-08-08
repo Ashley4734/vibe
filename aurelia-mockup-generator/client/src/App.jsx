@@ -7,6 +7,7 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [previews, setPreviews] = useState([]);
   const [downloadUrl, setDownloadUrl] = useState(null);
+  const [error, setError] = useState(null);
 
   const connectProgress = (genId) => {
     const eventSource = new EventSource(`/progress/${genId}`);
@@ -23,6 +24,7 @@ export default function App() {
     setLoading(true);
     setPreviews([]);
     setDownloadUrl(null);
+    setError(null);
 
     const formData = new FormData();
     formData.append('artwork', file);
@@ -34,10 +36,21 @@ export default function App() {
 
     connectProgress(genId);
 
-    const blob = await (await fetch(zip)).blob();
-    setDownloadUrl(window.URL.createObjectURL(blob));
-
-    setLoading(false);
+    try {
+      const base64 = zip.split(',')[1];
+      const byteCharacters = atob(base64);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: 'application/zip' });
+      setDownloadUrl(window.URL.createObjectURL(blob));
+    } catch (e) {
+      setError('Failed to decode download file');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -64,6 +77,7 @@ export default function App() {
           Download All
         </a>
       )}
+      {error && <p className="text-red-500 mt-4">{error}</p>}
     </div>
   );
 }
