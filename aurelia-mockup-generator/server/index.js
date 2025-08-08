@@ -17,11 +17,14 @@ const REPLICATE_API_TOKEN = process.env.REPLICATE_API_TOKEN;
 const REPLICATE_MODEL_VERSION = process.env.REPLICATE_MODEL_VERSION; // <-- real version hash
 const PORT = process.env.PORT || 3000;
 
-if (!REPLICATE_API_TOKEN) {
-  console.warn('⚠️  Missing REPLICATE_API_TOKEN');
-}
-if (!REPLICATE_MODEL_VERSION) {
-  console.warn('⚠️  Missing REPLICATE_MODEL_VERSION');
+const missingEnv = [];
+if (!REPLICATE_API_TOKEN) missingEnv.push('REPLICATE_API_TOKEN');
+if (!REPLICATE_MODEL_VERSION) missingEnv.push('REPLICATE_MODEL_VERSION');
+if (missingEnv.length) {
+  console.error(
+    `❌ Missing required environment variables: ${missingEnv.join(', ')}`
+  );
+  process.exit(1);
 }
 
 const MOCKUP_CONFIG = JSON.parse(
@@ -149,9 +152,11 @@ app.get('/progress/:id', (req, res) => {
 // ---------- Generate route ----------
 app.post('/generate', upload.single('artwork'), async (req, res) => {
   if (!REPLICATE_API_TOKEN || !REPLICATE_MODEL_VERSION) {
+    const missing = [];
+    if (!REPLICATE_API_TOKEN) missing.push('REPLICATE_API_TOKEN');
+    if (!REPLICATE_MODEL_VERSION) missing.push('REPLICATE_MODEL_VERSION');
     return res.status(500).json({
-      error:
-        'Server missing Replicate configuration. Set REPLICATE_API_TOKEN and REPLICATE_MODEL_VERSION.',
+      error: `Server missing required environment variables: ${missing.join(', ')}`,
     });
   }
 
