@@ -25,7 +25,8 @@ WORKDIR /app/server
 ENV NODE_ENV=production
 ENV PORT=3000
 # Required environment variables
-ENV REPLICATE_API_TOKEN=""
-ENV REPLICATE_MODEL_VERSION=""
+# Provide these at runtime via `docker run -e` or Docker secrets
+# ENV REPLICATE_API_TOKEN=""
+# ENV REPLICATE_MODEL_VERSION=""
 EXPOSE 3000
 CMD ["node", "index.js"]
